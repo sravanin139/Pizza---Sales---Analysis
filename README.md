@@ -168,11 +168,6 @@ limit 5;
 ```
 
 12. **Bottom 5 best sellers by total quantity**:
-```sql
-select
-	pizza_name,
-	sum(quantity) as total_quantity
-from pizza_sales
 group by pizza_name
 order by 2 
 limit 5;
