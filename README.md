@@ -3,7 +3,9 @@
 ## Project Overview
 
 **Project Title**: Pizza Sales Analysis
+
 **Level**: Beginner to Intermediate
+
 **Database**: pizza_sales_db
 `
 
