@@ -12,14 +12,15 @@ This project demonstrates SQL and Power BI skills commonly used by data analysts
 4.	Business Analysis: Create Power BI dashboards to visualize sales trends and performance.
 
 ## Project Structure
-1. Database Setup
-Database Creation:
+1. **Database Setup
+**Database Creation:
 A database named pizza_sales_db is created, containing a table pizza_sales with the following structure:
 
-'''sql
- CREATE DATABASE pizza_sales_db;
+‘’’sql
+Copy code
+CREATE DATABASE pizza_sales_db;
 
- CREATE TABLE pizza_sales
+CREATE TABLE pizza_sales
  (
     order_id INT PRIMARY KEY,
     order_date DATE,
@@ -30,6 +31,34 @@ A database named pizza_sales_db is created, containing a table pizza_sales with 
     quantity INT,
     total_price FLOAT
 );
+‘’’
+2. **Data Exploration & Cleaning
+SQL Queries for EDA and Cleaning:
+•	Total Records:
+‘’’sql
+Copy code
+SELECT COUNT(*) FROM pizza_sales;
+‘’’
+•	Unique Pizzas:
+‘’’sql
+Copy code
+SELECT DISTINCT pizza_name FROM pizza_sales;
+‘’’
+•	Check for Missing Data:
+‘’’sql
+Copy code
+SELECT * FROM pizza_sales
+‘’’
+WHERE order_date IS NULL OR order_time IS NULL OR pizza_name IS NULL 
+OR size IS NULL OR category IS NULL OR quantity IS NULL OR total_price IS NULL;
+•	Remove Missing Data:
+‘’’sql
+Copy code
+DELETE FROM pizza_sales;
+‘’’
+WHERE order_date IS NULL OR order_time IS NULL OR pizza_name IS NULL 
+OR size IS NULL OR category IS NULL OR quantity IS NULL OR total_price IS NULL;
+
 ''' 
 
 
