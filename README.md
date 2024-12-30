@@ -28,6 +28,6 @@ CREATE TABLE pizza_sales (
     category VARCHAR(25),
     quantity INT,
     total_price FLOAT
-); '''
+); 
 
 
