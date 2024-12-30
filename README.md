@@ -32,12 +32,8 @@ CREATE TABLE pizza_sales (
     total_price FLOAT
 );
 '''
-## 2. Data Exploration & Cleaning
-**SQL Queries for EDA and Cleaning:**
-•	**Total Records:**
-```sql
-SELECT COUNT(*) FROM pizza_sales;
-```
+
+
 •	**Unique Pizzas:**
 ```sql
 SELECT DISTINCT pizza_name FROM pizza_sales;
