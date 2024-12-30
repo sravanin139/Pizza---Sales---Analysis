@@ -32,9 +32,7 @@ CREATE TABLE pizza_sales (
     total_price FLOAT
 );
 '''
-
-
-•	**Unique Pizzas:**
+**Unique Pizzas:**
 ```sql
 SELECT DISTINCT pizza_name FROM pizza_sales;
 ```
