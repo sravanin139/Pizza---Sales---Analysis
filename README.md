@@ -17,11 +17,11 @@ ________________________________________
 **Database Creation:
 A database named pizza_sales_db is created, containing a table pizza_sales with the following structure:
 
-''' sql
+```sql
+-- SQL script to create the database and table
 CREATE DATABASE pizza_sales_db;
 
-CREATE TABLE pizza_sales
- (
+CREATE TABLE pizza_sales (
     order_id INT PRIMARY KEY,
     order_date DATE,
     order_time TIME,
