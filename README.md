@@ -32,7 +32,7 @@ CREATE TABLE pizza_sales (
     total_price FLOAT
 );
 '''
-**2. Data Exploration & Cleaning**
+## 2. Data Exploration & Cleaning
 **SQL Queries for EDA and Cleaning:**
 •	**Total Records:**
 ```sql
