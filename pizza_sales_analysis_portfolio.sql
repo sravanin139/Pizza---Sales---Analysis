@@ -63,7 +63,7 @@ from pizza_sales
 where to_char(order_date,'mon') ='jan'
 group by 1;
 
--- 8.percentage of sales by pizza_size in jan.
+-- 9.percentage of sales by pizza_size in jan.
 select
 	pizza_size,
 	cast(sum(total_price) as decimal(10,2)) as total_sales,
@@ -74,7 +74,7 @@ where to_char(order_date,'mon') ='jan'
 group by 1
 order by pct desc;
 
--- 9.top 5 best sellers by revenue.
+-- 10.top 5 best sellers by revenue.
 select
 	pizza_name,
 	sum(total_price) as revenue
@@ -83,7 +83,7 @@ group by pizza_name
 order by 2 desc
 limit 5;
 
--- 10.bottom 5 best sellers by revenue.
+-- 11.bottom 5 best sellers by revenue.
 select
 	pizza_name,
 	sum(total_price) as revenue
@@ -92,7 +92,7 @@ group by pizza_name
 order by 2 
 limit 5;
 
--- 11.bottom 5 best sellers by total quantity .
+-- 12.bottom 5 best sellers by total quantity .
 select
 	pizza_name,
 	sum(quantity) as total_quantity
@@ -101,7 +101,7 @@ group by pizza_name
 order by 2 
 limit 5;
 
--- 12.top 5 best sellers by total orders .
+-- 13.top 5 best sellers by total orders .
 select
 	pizza_name,
 	count(distinct order_id) as total_orders
