@@ -1,12 +1,13 @@
-# Retail Sales Analysis SQL Project
+# Pizza Sales Analysis SQL and Power BI Project
 
 ## Project Overview
 
-**Project Title**: Retail Sales Analysis  
-**Level**: Beginner  
-**Database**: `p1_retail_db`
+**Project Title:** Pizza Sales Analysis
+**Level:** Beginner to Intermediate
+**Database:** pizza_sales_db
+`
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+This project demonstrates SQL and Power BI skills commonly used by data analysts to analyze sales data for a pizza delivery business. It includes data exploration, cleaning, visualization, and answering business-related questions. This project is ideal for anyone looking to build a foundation in SQL and dashboarding using Power BI.
 
 ## Objectives
 
@@ -14,214 +15,218 @@ This project is designed to demonstrate SQL skills and techniques typically used
 2. **Data Cleaning**: Identify and remove any records with missing or null values.
 3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
 4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
-
 ## Project Structure
-
-### 1. Database Setup
-
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+## Objectives
+1.	**Database Setup**: Create and populate a database with pizza sales data.
+2.	**Data Cleaning**: Identify and remove any missing or inconsistent records.
+3.	**Exploratory Data Analysis (EDA)**: Use SQL to analyze and derive meaningful insights.
+4.	**Business Analysis**: Create Power BI dashboards to visualize sales trends and performance.
 
 ```sql
-CREATE DATABASE p1_retail_db;
+CREATE DATABASE pizza_sales_db;
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
+CREATE TABLE pizza_sales
+ (
+    order_id INT PRIMARY KEY,
+    order_date DATE,
+    order_time TIME,
+    pizza_name VARCHAR(50),
+    size VARCHAR(15),
+    category VARCHAR(25),
     quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
+    total_price FLOAT
 );
 ```
 
 ### 2. Data Exploration & Cleaning
 
 - **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
+- **Customer Count**: Find out how many unique pizzas are in the dataset.
+- **Category Count**: Check for missing data in the dataset.
 - **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
 
 ```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
+SELECT COUNT(*) FROM pizza_sales;
 
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+SELECT DISTINCT pizza_name FROM pizza_sales;
 
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+SELECT * FROM pizza_sales
+WHERE order_date IS NULL OR order_time IS NULL OR pizza_name IS NULL 
+OR size IS NULL OR category IS NULL OR quantity IS NULL OR total_price IS NULL
+
+DELETE FROM pizza_sales
+WHERE order_date IS NULL OR order_time IS NULL OR pizza_name IS NULL 
+OR size IS NULL OR category IS NULL OR quantity IS NULL OR total_price IS NULL;
+
 ```
 
 ### 3. Data Analysis & Findings
 
 The following SQL queries were developed to answer specific business questions:
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
-```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
-```
-
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
-```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
-```
-
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
-```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
-```
-
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
+1. **Total Revenue:the sum of the total price of all pizza orders**:
 ```sql
 SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
+sum(total_price) as total_revenue
+from pizza_sales;
 ```
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
+2. **Average order value:the avg amount spent per order,calculated by dividing the total revenue by the total number of orders**:
 ```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
+select 
+	sum(total_price)/count(distinct order_id) as avg_order_value
+from pizza_sales;
 ```
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
+3. **Total pizzas sold:the sum of the quantities of all pizzas sold.**:
 ```sql
-SELECT 
-    category,
-    gender,
-    COUNT(*) as total_trans
-FROM retail_sales
-GROUP 
-    BY 
-    category,
-    gender
-ORDER BY 1
+select
+	sum(quantity) as total_pizzas_sold
+from pizza_sales;
 ```
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
+4. **Total orders:the total number of orders placed**:
 ```sql
-SELECT 
-       year,
-       month,
-    avg_sale
-FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
+select
+	count(distinct order_id) as total_orders
+from pizza_sales;
 ```
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
+5. **Avg pizzas per order:the avg no.of pizzas sold per order,calculated by dividing the total no.of pizzas sold by the total no.of orders**:
 ```sql
-SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
+select 
+	sum(quantity)/count(distinct order_id) as avg_pizzas_per_order
+from pizza_sales;
 ```
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
+6. **Daily trend for total orders**:
 ```sql
-SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
-FROM retail_sales
-GROUP BY category
+select
+	to_char(order_date,'day') as order_day,
+	count(distinct order_id) as total_orders
+from pizza_sales
+group by 1;
 ```
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
+7. **Monthly trend for total_orders**:
 ```sql
-WITH hourly_sale
-AS
-(
-SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
-)
-SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
-GROUP BY shift
+select
+	to_char(order_date,'mon') as month_name,
+	count(distinct order_id) as total_orders
+from pizza_sales
+group by 1
+order by 2 desc;
+```
+
+8. **Percentage of sales by pizza category**:
+```sql
+select
+	pizza_category,
+	sum(total_price) as total_sales,
+	sum(total_price)*100/(select sum(total_price) from pizza_sales where to_char(order_date,'mon') ='jan') as pct
+from pizza_sales
+where to_char(order_date,'mon') ='jan'
+group by 1;
+```
+
+9. **Percentage of sales by pizza_size in jan.**:
+```sql
+select
+	pizza_size,
+	cast(sum(total_price) as decimal(10,2)) as total_sales,
+	cast(sum(total_price)*100/(select sum(total_price) from pizza_sales where to_char(order_date,'mon') ='jan') as decimal(10,2)) as pct
+from pizza_sales
+where to_char(order_date,'mon') ='jan'
+--where extract(quarter from order_date) =1
+group by 1
+order by pct desc;
+
+```
+
+10. **Top 5 best sellers by revenue**:
+```sql
+select
+	pizza_name,
+	sum(total_price) as revenue
+from pizza_sales
+group by pizza_name
+order by 2 desc
+limit 5;
+```
+
+11. **Bottom 5 best sellers by revenue**:
+```sql
+select
+	pizza_name,
+	sum(total_price) as revenue
+from pizza_sales
+group by pizza_name
+order by 2 
+limit 5;
+```
+
+12. **Bottom 5 best sellers by total quantity**:
+```sql
+select
+	pizza_name,
+	sum(quantity) as total_quantity
+from pizza_sales
+group by pizza_name
+order by 2 
+limit 5;
+```
+
+13. **Top 5 best sellers by total orders**:
+```sql
+select
+	pizza_name,
+	count(distinct order_id) as total_orders
+from pizza_sales
+group by pizza_name
+order by 2 desc
+limit 5;
 ```
 
 ## Findings
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
+- **The evening shift saw the most orders.**
+
+## Power BI Dashboards
+
+## Key Metrics Dashboard
+•	**Total Revenue**: $817.86K
+•	**Total Orders**: 21,350
+•	**Best-Selling Pizza**: Thai Chicken Pizza
+•	**Top Category**: Classic
+•	**Sales by Day and Month**: Fridays and July were peak periods.
+## Trends and Visualizations
+•	**Monthly Sales Trends**: Clear visualization of sales peaks and dips.
+•	**Category Contribution**: Classic pizzas led in revenue and sales volume.
+•	**Size Preference**: Large pizzas were most preferred.
+
+## Findings
+1.	**Revenue Insights**: Total revenue generated was $817.86K.
+2.	**Customer Preferences**:
+o	**Most preferred category**: Classic.
+o	**Most preferred size**: Large.
+3.	**Peak Periods**:
+o	**Day**: Friday.
+o	**Month**: July and January.
 
 ## Reports
+1.	**Key Metrics Report**: Highlights top pizzas, sizes, and revenue.
+2.	**Trend Analysis**: Monthly and daily trends to identify peak periods.
+3.	**Customer Insights**: Identified top-spending customers and category performance.
 
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
 
 ## Conclusion
 
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
+This project showcases the application of SQL and Power BI for data analysis. By exploring sales data, generating insights, and creating dashboards, we gain a deeper understanding of customer preferences and sales trends. This project is a valuable addition to any aspiring data analyst's portfolio.
 
-## How to Use
+## Author - Sravani Nandyala
 
-1. **Clone the Repository**: Clone this project repository from GitHub.
-2. **Set Up the Database**: Run the SQL scripts provided in the `database_setup.sql` file to create and populate the database.
-3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
-4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
+This project is part of my portfolio, showcasing the SQL and Power bi skills essential for data analyst role.
 
-## Author - Zero Analyst
-
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
-
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
-
-Thank you for your support, and I look forward to connecting with you!
+My LinkedIn Profile AND Email Address
+LinkedIn: [https://www.linkedin.com/in/sravani-nandyala-884a9a171]
+Email : sravanin139@gmail.com
